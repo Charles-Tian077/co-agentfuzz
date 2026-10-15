@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "co-agentfuzz"
+version = "0.1.0"
+description = "Collaborative feedback controllers and frozen-model mechanism studies"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE.txt", "src/PromptFuzz/Fuzzer/LICENSE"]
+dependencies = [
+  "openai==1.36.1", "httpx==0.27.2", "numpy==2.4.6", "pandas==2.2.2",
+  "scikit-learn==1.5.1", "scipy==1.17.1", "tiktoken==0.7.0", "PyYAML==6.0.2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==8.3.2"]
+
+[project.scripts]
+coagent-records = "coagent_repro.replicate_records:main"
+coagent-strong-records = "coagent_repro.strong_records:main"
+coagent-v32-records = "coagent_repro.v32_records:main"
+coagent-preflight = "coagent_repro.preflight:main"
+coagent-v32-preflight = "coagent_repro.v32_preflight:main"
+coagent-token-probe = "benign_record_feedback.token_probe:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["co_agent_fuzz*", "coagent_repro*", "benign_orca*", "benign_llm_orca*", "benign_record_feedback*", "PromptFuzz*", "Experiment*"]
+exclude = ["tests*"]
+
+[tool.setuptools.package-data]
+co_agent_fuzz = ["config/*.yaml"]
+Experiment = ["project_identity.json"]
+coagent_repro = ["weights_manifest.json"]
+"PromptFuzz.Fuzzer" = ["LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]
+norecursedirs = [".venv", "Results", "runs", "tmp", "build", "dist", ".git"]
+addopts = "-ra -p no:cacheprovider"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E9", "F63", "F7", "F82"]

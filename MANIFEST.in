@@ -1,0 +1,21 @@
+include README.md LICENSE.txt THIRD_PARTY.md requirements.txt requirements-dev.txt
+recursive-include src/co_agent_fuzz/config *.yaml
+include src/Experiment/project_identity.json
+include src/PromptFuzz/Fuzzer/LICENSE
+include src/coagent_repro/weights_manifest.json
+recursive-include docs *.md
+recursive-include experiments *.md *.json *.sh *.sbatch
+recursive-include datasets/synthetic *.json *.jsonl
+include datasets/README.md models/README.md models/registry.json
+recursive-include release_tools *.py
+recursive-include tests *.py
+include conftest.py
+prune datasets/private
+prune experiments/outputs
+prune Results
+prune runs
+prune tmp
+prune .venv
+prune build
+prune dist
+global-exclude *.py[cod] *.gguf *.safetensors *.docx *.pdf *.pptx *.png *.jpg *.jpeg

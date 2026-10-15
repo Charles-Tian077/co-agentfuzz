@@ -1,0 +1,5 @@
+{
+  "display_name": "Co-AgentFuzz",
+  "method_aliases": ["Orcafuzz", "OrcaFuzz", "ORCAFUZZ", "co-agentfuzz", "Co-AgentFuzz"],
+  "note": "Legacy names are read-only aliases for historical records. Do not rewrite evidence files."
+}

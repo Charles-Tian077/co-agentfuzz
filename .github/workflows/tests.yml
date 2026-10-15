@@ -1,0 +1,22 @@
+name: Offline unit tests
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install declared dependencies
+        run: python -m pip install -e '.[dev]'
+      - name: Test with model and network calls blocked
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -m pytest -q
+      - name: Check public-source hygiene
+        run: python release_tools/check_release.py
+      - name: Verify fixed synthetic export
+        run: python release_tools/export_synthetic_data.py --check

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "scope": "existing frozen-model fictional-record adapters; metadata only",
+  "contains_weights": false,
+  "models": [
+    {"tag": "qwen2.5:7b", "module": "coagent_repro.replicate_records", "preset": "base"},
+    {"tag": "deepseek-r1:7b", "module": "coagent_repro.replicate_records", "preset": "base"},
+    {"tag": "gpt-oss:20b", "module": "coagent_repro.replicate_records", "preset": "base"},
+    {"tag": "llama3.1:8b", "module": "coagent_repro.replicate_records", "preset": "base"},
+    {"tag": "qwen3:32b", "module": "coagent_repro.strong_records", "preset": "strong_non_thinking"},
+    {"tag": "qwq:32b", "module": "coagent_repro.strong_records", "preset": "strong_model_default"},
+    {"tag": "deepseek-v3.2:q4km-local", "module": "coagent_repro.v32_records", "preset": "v32_q4km_offload", "weights_manifest": "src/coagent_repro/weights_manifest.json"}
+  ],
+  "presets": {
+    "base": {"generator_editor_output_limit": 64, "selector_output_limit": 16, "reasoning": "non-thinking"},
+    "strong_non_thinking": {"generator_editor_output_limit": 64, "selector_output_limit": 16, "reasoning": "non-thinking"},
+    "strong_model_default": {"generator_editor_output_limit": 512, "selector_output_limit": 512, "reasoning": "model-default"},
+    "v32_q4km_offload": {"generator_editor_output_limit": 64, "selector_output_limit": 16, "reasoning": "non-thinking", "quantization": "Q4_K_M", "allowed_gpu_count_layer_pairs": [[2, 36], [4, 40], [4, 20]], "cpu_threads": 16, "cpu_offload": true}
+  },
+  "checkpoint_policy": "Record the actual run manifest digest; tags alone do not identify a checkpoint."
+}

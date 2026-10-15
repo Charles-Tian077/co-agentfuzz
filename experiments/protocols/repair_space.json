@@ -1,0 +1,17 @@
+{
+  "protocol_id": "co-agentfuzz-fictional-repair-v1",
+  "metadata_only": true,
+  "implementation": "coagent_repro.replicate_records.partitions",
+  "training_records": 18,
+  "evaluation_records": {"smoke": 6, "replication": 60},
+  "evaluation_offset": 16,
+  "seeds": [101, 137, 173],
+  "conditions": ["full", "no_learning", "no_communication", "neither"],
+  "interventions": ["clean", "missing", "extra", "wrong_value", "wrong_type", "syntax"],
+  "llm_weights_frozen": true,
+  "evaluation_learning_frozen": true,
+  "independent_unit": "fixed_record",
+  "seed_handling": "nested within record",
+  "scope": "harmless mechanism validation, not formal attack evidence",
+  "runtime_options": "Use the existing adapter; per-model envelopes differ and must be disclosed."
+}

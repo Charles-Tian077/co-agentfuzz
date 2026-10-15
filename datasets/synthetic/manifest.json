@@ -1,0 +1,63 @@
+{
+  "conditions": [
+    "full",
+    "no_learning",
+    "no_communication",
+    "neither"
+  ],
+  "dataset_id": "co-agentfuzz-fictional-repair-v1",
+  "evaluation_offset": 16,
+  "families": [
+    "contact",
+    "inventory",
+    "meeting"
+  ],
+  "family_counts": {
+    "eval": {
+      "contact": 20,
+      "inventory": 20,
+      "meeting": 20
+    },
+    "train": {
+      "contact": 6,
+      "inventory": 6,
+      "meeting": 6
+    }
+  },
+  "files": {
+    "test.jsonl": {
+      "bytes": 11308,
+      "sha256": "91796823a2abbccb3e7206f05da392022602174f7c4309279613928ca84178a6"
+    },
+    "train.jsonl": {
+      "bytes": 3380,
+      "sha256": "8e7a5c1864e8982a584234258f916708f818cbd05c472d861d5913a2bbc7b730"
+    }
+  },
+  "interventions": [
+    "clean",
+    "missing",
+    "extra",
+    "wrong_value",
+    "wrong_type",
+    "syntax"
+  ],
+  "labels_are_verifier_only": true,
+  "partition_digest": "df70ae7b0c9867b914e5a22678cda376f6fdb839b6077e4f095ae6cd4a1d1f90",
+  "provenance": "Deterministic export of existing source fixtures, not model observations.",
+  "runtime_reads_built_in_tasks": true,
+  "schema_version": 1,
+  "scope": "harmless fixed-record mechanism study; not an attack benchmark",
+  "seeds": [
+    101,
+    137,
+    173
+  ],
+  "source_sha256": {
+    "src/benign_llm_orca/study.py": "7a992b17b25bcf222f60713753ddc904688997dcc44f3c997b1dff0deb802675",
+    "src/benign_record_feedback/lab.py": "b834020537dfd8c087ab5aa64624c44755c4f5d00a737fb9903271c20e45874d",
+    "src/coagent_repro/replicate_records.py": "bf2cccaf0f5ed292d2c14606cf9aee86723190d649d03329d79b420135c14a66"
+  },
+  "test_records": 60,
+  "training_records": 18
+}

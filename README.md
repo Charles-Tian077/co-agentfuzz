@@ -26,6 +26,14 @@ mechanism. It uses built-in fictional records and a deterministic verifier, with
 frozen LLM weights. The original prompt-search implementation and inherited
 PromptFuzz/GPTFuzzer components are retained separately for historical comparisons.
 
+### Framework
+
+[![Co-AgentFuzz framework](https://charles-tian077.github.io/co-agentfuzz-homepage/static/images/framework.png?v=20261122-sync)](https://charles-tian077.github.io/co-agentfuzz-homepage/static/figures/framework.pdf?v=20261122-sync)
+
+The forward path connects seed generation, logged mutation, and candidate selection.
+Verified quality and measured cost return to role-specific action values.
+Peer messages update compact numerical priors for later decisions.
+
 | Component | What it does |
 |:--|:--|
 | Generator | Produces a seed or an initial record |

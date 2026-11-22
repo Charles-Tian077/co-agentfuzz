@@ -28,6 +28,10 @@ Datasets/**
 !datasets/synthetic/train.jsonl
 !datasets/synthetic/test.jsonl
 !datasets/synthetic/manifest.json
+!datasets/synthetic/README.md
+!datasets/synthetic/schema.json
+!datasets/benchmarks/
+!datasets/benchmarks/README.md
 Results/
 Logs/
 runs/

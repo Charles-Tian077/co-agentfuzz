@@ -36,6 +36,8 @@ def check(root):
         if relative.parts[0] == 'datasets' and label not in {
             'datasets/README.md', 'datasets/synthetic/train.jsonl',
             'datasets/synthetic/test.jsonl', 'datasets/synthetic/manifest.json',
+            'datasets/synthetic/README.md', 'datasets/synthetic/schema.json',
+            'datasets/benchmarks/README.md',
         }:
             findings.append({'path': label, 'check': 'unreviewed dataset'}); continue
         if path.suffix.lower() in FORBIDDEN_EXTS or (path.name.startswith('.env') and path.name != '.env.example'):

@@ -10,7 +10,7 @@ Generation · Mutation · Selection · Role-specific learning
 [![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-3B7A57)](LICENSE.txt)
 
-[Overview](#overview) · [Installation](#installation) · [Model deployment](#model-deployment) · [Experiments](#experiments) · [Results and auditing](#results-and-auditing) · [Repository map](#repository-map)
+[Overview](#overview) · [Datasets](datasets/README.md) · [Installation](#installation) · [Model deployment](#model-deployment) · [Experiments](#experiments) · [Results and auditing](#results-and-auditing) · [Repository map](#repository-map)
 
 </div>
 
@@ -54,6 +54,12 @@ Peer messages update compact numerical priors for later decisions.
 The fictional-record study measures controlled generation, repair, and selection.
 Its accuracy is **not jailbreak or prompt-injection attack success**. Model adapter
 availability does not imply that every model completed a three-seed experiment.
+
+### Datasets
+
+The [dataset catalog](datasets/README.md) links the fixed training and test splits,
+the row schema, file checksums and the historical-search availability guide.
+The public fixture release contains 18 training and 60 held-out fictional records.
 
 ## Installation
 

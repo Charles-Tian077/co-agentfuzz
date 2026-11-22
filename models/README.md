@@ -5,7 +5,7 @@ local model tags to packaged execution adapters. No model weights, tokens,
 credentials or inference service are bundled. No weights are downloaded by the
 release or test commands.
 
-The controllers and local model clients live under `src/co_agent_fuzz/`; the
+The controllers and local model clients live under `src/co_agent_fuzz/`. The
 bounded fictional-record adapters live under `src/coagent_repro/`. The registry
 is a documentation index, not a new runtime configuration or a claim that every
 adapter produced a complete successful replication.
@@ -18,7 +18,7 @@ universal checkpoint or quantization for a tag.
 
 The DeepSeek-V3.2 Q4_K_M manifest remains at
 `src/coagent_repro/weights_manifest.json`. Its nine shard hashes and repository
-revision describe weights, not redistribute them. The retained V3.2 adapter is
+revision identify the checkpoint. The weights are not redistributed. The retained V3.2 adapter is
 not proof of a complete three-seed efficacy result. CPU/GPU-offload choices and
 different reasoning/output budgets must be disclosed and not pooled as a
 matched cross-model cost comparison.

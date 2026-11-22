@@ -32,7 +32,7 @@ PromptFuzz/GPTFuzzer components are retained separately for historical compariso
 
 The forward path connects seed generation, logged mutation, and candidate selection.
 Verified quality and measured cost return to role-specific action values.
-Peer messages update compact numerical priors for later decisions.
+In the repair-space protocol, peer messages update compact numerical priors for later decisions.
 
 | Component | What it does |
 |:--|:--|
@@ -40,7 +40,7 @@ Peer messages update compact numerical priors for later decisions.
 | Mutator / editor | Transforms the seed or corrects the draft |
 | Selector | Chooses candidates for evaluation |
 | External evaluator | Verifies outcomes and supplies role-specific feedback |
-| Learning and communication | Update action values and compact peer priors; record receipts and the state used by later decisions |
+| Learning and communication | Update action values and compact peer priors. Record receipts and the state used by later decisions |
 
 ### What is available
 
@@ -97,25 +97,25 @@ python release_tools/check_release.py
 Installation requires access to the declared packages or an existing wheelhouse.
 The tests themselves block network and model connections, including loopback
 HTTP. They need no GPU, weights, API key, or paid API. Passing them checks the
-implementation and fixtures; it does not reproduce a measured LLM result.
+implementation and fixtures. It does not reproduce a measured LLM result.
 
 ## Model deployment
 
 ### 1. Prepare the inference environment
 
 The fixed-record entry points require an **allocated Slurm compute-node step**.
-Offline checks can run locally; the documented inference path runs on the
+Offline checks can run locally. The documented inference path runs on the
 allocated compute node, with GPU residency checked after every call.
 
 Before submitting a run, prepare:
 
 | Requirement | Configuration |
 |:--|:--|
-| Python environment | Activate the installed environment before `sbatch`; `python` must be available inside the job |
+| Python environment | Activate the installed environment before `sbatch`. `python` must be available inside the job |
 | Inference service | An installed Ollama-compatible service supporting `/api/version`, `/api/tags`, `/api/generate`, and `/api/ps` |
-| Existing model cache | Set `OLLAMA_MODELS` to an authorized cache visible on the compute node; the exact model tag must already be registered |
-| GPU and host memory | Request resources that fit the checkpoint, context, and offload preset; the template defaults are not universal requirements |
-| Job-local endpoint | Set an unused `PORT` in **20000–49999**; inference connects only to `127.0.0.1` |
+| Existing model cache | Set `OLLAMA_MODELS` to an authorized cache visible on the compute node. The exact model tag must already be registered |
+| GPU and host memory | Request resources that fit the checkpoint, context, and offload preset. The template defaults are not universal requirements |
+| Job-local endpoint | Set an unused `PORT` in **20000–49999**. Inference connects only to `127.0.0.1` |
 | Run storage | Set `RUN_ROOT` to a new private directory for each model, phase, and seed |
 
 Weights are not bundled or downloaded by the execution template. Prepare the
@@ -133,7 +133,13 @@ quantization, chat template, and service version.
 | `llama3.1:8b` | `coagent_repro.replicate_records` | 64 · 16 | Non-thinking |
 | `qwen3:32b` | `coagent_repro.strong_records` | 64 · 16 | Non-thinking |
 | `qwq:32b` | `coagent_repro.strong_records` | 512 · 512 | Model default |
-| `deepseek-v3.2:q4km-local` | `coagent_repro.v32_records` | 64 · 16 | Non-thinking; Q4_K_M |
+| `deepseek-v3.2:q4km-local` | `coagent_repro.v32_records` | 64 · 16 | Non-thinking (Q4_K_M) |
+
+The documented `coagent_repro` commands run the repair-space adapters. Their
+64/64/16 output preset for the four base-model tags differs from the archived
+protocol-L 96/96/16 preset in `benign_llm_orca.study`. Protocol L also uses a
+distinct reward and prompt protocol. The presets do not represent the same
+experimental cohort.
 
 These are per-call output-token limits, not measured usage. The registry is at
 [models/registry.json](models/registry.json). Keep the preset identical across
@@ -163,7 +169,7 @@ sbatch --export=ALL --chdir="$PWD" \
 ```
 
 Add your scheduler's `--account` or other resource flags as needed. The resource
-values above illustrate a small-model run; adjust them to the actual checkpoint
+values above illustrate a small-model run. Adjust them to the actual checkpoint
 and allocation. **Always set `PORT` explicitly**: the template's default `11434`
 is outside the fixed-record transport's accepted range.
 
@@ -178,7 +184,7 @@ run a separate preflight or launch the three replication seeds for you.
 For Qwen3/QwQ, `coagent_repro.preflight` checks nonempty output, record schema,
 selector representation, actual token counts, and GPU residency. V3.2 has
 `coagent_repro.v32_preflight`. These are unscored checks on three training
-records; they do not select models using held-out accuracy.
+records. They do not select models using held-out accuracy.
 
 When managing a service yourself, run a preflight only inside an allocated
 compute-node step against that job's existing loopback service, for example:
@@ -189,7 +195,7 @@ srun --ntasks=1 python -m coagent_repro.preflight \
   --output /absolute/path/to/private-runs/qwen3-32b/preflight
 ```
 
-`coagent_repro.preflight` accepts only `qwen3:32b` and `qwq:32b`; it is not the
+`coagent_repro.preflight` accepts only `qwen3:32b` and `qwq:32b`. It is not the
 preflight entry point for the four base-model tags. For V3.2, use the V3.2 module
 and `--model deepseek-v3.2:q4km-local` instead. Each output directory must be new.
 
@@ -210,8 +216,8 @@ The adapter accepts the following recorded GPU-count / offloaded-layer pairs:
 
 Set `MODEL=deepseek-v3.2:q4km-local` and both V3.2 variables before submitting.
 Request the corresponding actual GPUs, sufficient host RAM, and at least the
-16 CPU threads used by this adapter. The variables describe the offload preset;
-they do not allocate resources. Record the actual GPUs, VRAM residency, CPU
+16 CPU threads used by this adapter. The variables describe the offload preset.
+They do not allocate resources. Record the actual GPUs, VRAM residency, CPU
 offload, and wall time. The generic template's one-GPU / 32 GB host-memory
 example is not suitable for V3.2.
 
@@ -230,13 +236,13 @@ template's environment variables, lifecycle, and failure behavior.
 
 | Protocol item | Setting |
 |:--|:--|
-| Task families | Contact, inventory, meeting; balanced within each partition |
+| Task families | Contact, inventory, meeting (balanced within each partition) |
 | Training partition | 18 fictional records per condition |
-| Held-out partition | 60 fixed records per condition; smoke uses 6 |
+| Held-out partition | 60 fixed records per condition. Smoke uses 6 |
 | Controlled draft interventions | Clean, missing field, extra field, wrong value, wrong type, syntax |
 | Random seeds | `101`, `137`, `173`, with separate controller states |
-| Adaptation | Role action values and compact numeric peer priors; LLM weights stay frozen |
-| Evaluation | Exploration disabled; action values and peer history frozen |
+| Adaptation | Role action values and compact numeric peer priors. LLM weights stay frozen |
+| Evaluation | Exploration is disabled. Action values and peer history are frozen |
 | Primary outcome | Exact correctness of the selected record |
 | Audit evidence | Actual tokens/calls, role rewards, Q changes, feedback receipts, consumed states, and GPU residency |
 
@@ -280,14 +286,14 @@ not be supplied to the policies or appended to prompts. See
 
 | Study | Implementation / guide | Interpretation |
 |:--|:--|:--|
-| Matched communication-text probe | `benign_record_feedback.token_probe`; [usage and input requirements](docs/REPRODUCIBILITY.md#matched-communication-text-probe) | Compares appended versus omitted training-history text on matched role inputs; requires a verified DeepSeek-R1-7B input run with the same model digest |
+| Matched communication-text probe | `benign_record_feedback.token_probe` ([usage and input requirements](docs/REPRODUCIBILITY.md#matched-communication-text-probe)) | Compares appended versus omitted training-history text on matched role inputs. Requires a verified DeepSeek-R1-7B input run with the same model digest |
 | Arithmetic mechanism diagnostic | `benign_orca.benchmark`, `benign_orca.audit` | Deterministic mechanism check, without LLM efficacy claims |
 | Earlier record diagnostic | `benign_llm_orca.study` | Separate task-offset, selector, and reward protocol |
-| Historical search comparisons | `Experiment.run_co_agent_fuzz`, `Experiment.compare_paper_metrics`, `Experiment.run_validation_matrix`, `Experiment.run_ablation_matrix` | Retained Co-AgentFuzz and PromptFuzz compatibility paths; require explicitly supplied, authorized historical inputs |
+| Historical search comparisons | `Experiment.run_co_agent_fuzz`, `Experiment.compare_paper_metrics`, `Experiment.run_validation_matrix`, `Experiment.run_ablation_matrix` | Retained Co-AgentFuzz and PromptFuzz compatibility paths that require explicitly supplied, authorized historical inputs |
 
 The token-text probe is a small matched prompt-cost study, not end-to-end
 hardware savings or an accuracy noninferiority test. It currently requires an
-input audit with both `verified: true` and `real_llm: true`; the replication
+input audit with both `verified: true` and `real_llm: true`. The replication
 auditor's output does not include `real_llm`, so a replication directory is not
 automatically a valid probe input. Do not add audit fields just to bypass this
 check. See the [version boundaries](docs/REPRODUCIBILITY.md).
@@ -295,7 +301,7 @@ check. See the [version boundaries](docs/REPRODUCIBILITY.md).
 Legacy tools use `COAGENT_DATA_ROOT` and `COAGENT_OUTPUT_ROOT` for private input
 and output paths. Installed-package users can additionally set
 `COAGENT_PROJECT_ROOT`, or supply absolute paths. The variables in
-[.env.example](.env.example) must be exported explicitly; that file is not
+[.env.example](.env.example) must be exported explicitly. That file is not
 automatically loaded. Inspect each CLI with `python -m Experiment.<module> --help`
 before configuring a historical study. Historical inputs and result ledgers
 are not included in this repository.
@@ -323,8 +329,8 @@ python -m json.tool /absolute/path/to/private-runs/qwen25-7b/seed-101/summary.js
 Require a successful scheduler exit, `summary.json` with `status: "complete"`,
 and `audit.json` with `verified: true` before treating a seed as complete.
 Within each trial, held-out exact-match accuracy is `correct / evaluations`.
-`tokens` includes training and evaluation; `training_tokens` identifies the
-training portion. Repair and disagreement counters cover both phases; use the
+`tokens` includes training and evaluation. `training_tokens` identifies the
+training portion. Repair and disagreement counters cover both phases. Use the
 episode `phase` field when reporting evaluation-only diagnostics.
 
 Preserve incomplete runs and their partial ledgers. An error before backend
@@ -336,7 +342,7 @@ not zero-cost calls. Do not fill absent seeds or overwrite failed runs.
 
 For a complete three-seed replication:
 
-1. Match conditions by fixed record ID and seed; verify all required runs and
+1. Match conditions by fixed record ID and seed. Verify all required runs and
    protocol/model identities first.
 2. Use the **60 held-out records as independent units** and aggregate seeds
    within each record before computing paired effects.
@@ -347,7 +353,7 @@ For a complete three-seed replication:
    identity, hardware, and CPU offload. Do not treat 180 seed observations as
    independent tasks or pool different protocols and budgets.
 
-These are analysis requirements; the per-seed CLI writes evidence and its replay
+These are analysis requirements. The per-seed CLI writes evidence and its replay
 audit, not a combined three-seed statistical report. The detailed methodology
 and limitations are in [REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
 
@@ -356,14 +362,14 @@ and limitations are in [REPRODUCIBILITY.md](docs/REPRODUCIBILITY.md).
 
 | Symptom | Check |
 |:--|:--|
-| `Job-local port required` | Export an unused `PORT` in 20000–49999 before `sbatch`; do not use the template default `11434` |
-| `A scheduled compute-node step is required` | Use the supplied Slurm template or a real `srun` step in your allocation; do not fabricate scheduler variables |
+| `Job-local port required` | Export an unused `PORT` in 20000–49999 before `sbatch`. Do not use the template default `11434` |
+| `A scheduled compute-node step is required` | Use the supplied Slurm template or a real `srun` step in your allocation. Do not fabricate scheduler variables |
 | `Existing local model/digest required; no download` | Check the existing cache, exact registered model tag, and service permissions |
-| Port already serves a process | Select a different unused job-local port; leave other services alone |
-| Output already exists | Use a new phase/seed directory; retain the previous evidence |
+| Port already serves a process | Select a different unused job-local port. Leave other services alone |
+| Output already exists | Use a new phase/seed directory. Retain the previous evidence |
 | GPU residency missing | Inspect the allocation, checkpoint fit, service log, and offload preset |
-| Timeout, missing final token counts, or circuit breaker | Preserve the partial run and recorded failure; do not silently retry or change precision/budgets |
-| Token probe rejects the prior run | Verify the required audit schema and identical DeepSeek-R1-7B digest; do not edit evidence to satisfy the gate |
+| Timeout, missing final token counts, or circuit breaker | Preserve the partial run and recorded failure. Do not silently retry or change precision/budgets |
+| Token probe rejects the prior run | Verify the required audit schema and identical DeepSeek-R1-7B digest. Do not edit evidence to satisfy the gate |
 
 </details>
 
@@ -389,7 +395,7 @@ co-agentfuzz/
 └── docs/                     # Reproducibility, availability, and release guidance
 ```
 
-The distribution and repository are named `co-agentfuzz`; the main Python import
+The distribution and repository are named `co-agentfuzz`. The main Python import
 is `co_agent_fuzz`. Legacy package names are retained for import compatibility
 and evidence replay. They do not identify additional methods.
 
@@ -402,8 +408,8 @@ claim additionally requires its exact data selection, archived source,
 checkpoint, inference settings, and resource budget.
 
 The [MIT license](LICENSE.txt) and inherited notices are retained. PromptFuzz and
-its GPTFuzzer components are attributed in [THIRD_PARTY.md](THIRD_PARTY.md);
-their presence is not a claim of original authorship by Co-AgentFuzz.
+its GPTFuzzer components are attributed in [THIRD_PARTY.md](THIRD_PARTY.md).
+Their presence is not a claim of original authorship by Co-AgentFuzz.
 
 [Reproducibility guide](docs/REPRODUCIBILITY.md) ·
 [Data availability](docs/DATA_AVAILABILITY.md) ·

@@ -33,15 +33,15 @@ values are an example for a small model, not requirements for all checkpoints.
 |:--|:--|
 | `OLLAMA_MODELS` | Existing authorized cache, visible and accessible on the compute node |
 | `MODEL` | Exact registered tag from [the model registry](../../models/registry.json) |
-| `PORT` | Unused port in **20000–49999**; set explicitly because the template default `11434` is rejected by the transport |
+| `PORT` | Unused port in **20000–49999**. Set explicitly because the template default `11434` is rejected by the transport |
 | `PHASE` | `smoke` or `replication` |
 | `SEED` | `101`, `137`, or `173` |
-| `RUN_ROOT` | New private output directory; existing paths are rejected |
-| `V32_GPU_COUNT`, `V32_GPU_LAYERS` | Required only for the V3.2 adapter; an allowed GPU-count / offload-layer pair |
+| `RUN_ROOT` | New private output directory. Existing paths are rejected |
+| `V32_GPU_COUNT`, `V32_GPU_LAYERS` | An allowed GPU-count / offload-layer pair, required only for the V3.2 adapter |
 
 The job inherits the active Python environment through the exported `PATH`.
-The batch script must run from the repository root; `--chdir="$PWD"` makes that
-explicit. Slurm must provide the job's GPU mask; do not fabricate allocation
+The batch script must run from the repository root. `--chdir="$PWD"` makes that
+explicit. Slurm must provide the job's GPU mask. Do not fabricate allocation
 variables to bypass the compute-node checks.
 
 ## Service lifecycle
